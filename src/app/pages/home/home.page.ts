@@ -1,23 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonList,
-  IonItem,
-  IonAvatar,
-  IonLabel,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  IonSpinner,
-  IonText,
-  IonButton,
-  type InfiniteScrollCustomEvent
+  IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader,
+  IonCardTitle, IonCardSubtitle, IonSpinner, IonText, IonButton,
+  IonFooter, IonButtons, IonIcon
 } from '@ionic/angular/standalone';
 import { PokemonService } from '../../services/pokemon.service';
 import { RouterModule } from '@angular/router';
+import { addIcons } from 'ionicons';
+import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-home',
@@ -27,19 +18,9 @@ import { RouterModule } from '@angular/router';
   imports: [
     CommonModule,
     RouterModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonList,
-    IonItem,
-    IonAvatar,
-    IonLabel,
-    IonInfiniteScroll,
-    IonInfiniteScrollContent,
-    IonSpinner,
-    IonText,
-    IonButton
+    IonHeader, IonToolbar, IonTitle, IonContent,
+    IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle,
+    IonSpinner, IonText, IonButton, IonFooter, IonButtons, IonIcon
   ]
 })
 export class HomePage {
@@ -47,24 +28,29 @@ export class HomePage {
 
   pokemons: any[] = [];
   offset = 0;
+  limit = 20;
   isLoading = false;
   error: any = null;
   hasMore = true;
+  currentPage = 1;
+  totalPages = 1;
 
   constructor() {
+    addIcons({ chevronBackOutline, chevronForwardOutline });
     this.loadPokemons();
   }
 
   loadPokemons() {
-    if (this.isLoading || !this.hasMore) return;
+    if (this.isLoading) return;
 
     this.isLoading = true;
     this.error = null;
 
-    this.pokemonService.getPokemons(this.offset).subscribe({
+    this.pokemonService.getPokemons(this.offset, this.limit).subscribe({
       next: (response: any) => {
-        this.pokemons = [...this.pokemons, ...response.results];
+        this.pokemons = response.results;
         this.hasMore = !!response.next;
+        this.calculateTotalPages(response.count);
         this.isLoading = false;
       },
       error: (err) => {
@@ -74,26 +60,24 @@ export class HomePage {
     });
   }
 
-  loadMore(event: Event) {
-    const infiniteScrollEvent = event as InfiniteScrollCustomEvent;
-    const infiniteScroll = infiniteScrollEvent.target;
+  calculateTotalPages(totalItems: number) {
+    this.totalPages = Math.ceil(totalItems / this.limit);
+  }
 
-    if (!this.hasMore) {
-      infiniteScroll.complete();
-      infiniteScroll.disabled = true;
-      return;
-    }
+  nextPage() {
+    if (!this.hasMore) return;
 
-    this.offset += 20;
+    this.offset += this.limit;
+    this.currentPage++;
     this.loadPokemons();
+  }
 
-    setTimeout(() => {
-      infiniteScroll.complete();
+  previousPage() {
+    if (this.offset === 0) return;
 
-      if (!this.hasMore) {
-        infiniteScroll.disabled = true;
-      }
-    }, 500);
+    this.offset -= this.limit;
+    this.currentPage--;
+    this.loadPokemons();
   }
 
   getPokemonId(url: string): string {
@@ -103,6 +87,7 @@ export class HomePage {
 
   reload() {
     this.offset = 0;
+    this.currentPage = 1;
     this.pokemons = [];
     this.hasMore = true;
     this.loadPokemons();
