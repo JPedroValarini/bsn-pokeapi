@@ -1,99 +1,164 @@
 ion-content {
-  --background: #f8f8f8;
+  --background: #f5f5f5;
 }
 
 .loading-spinner {
   display: flex;
   justify-content: center;
-  padding-top: 2rem;
+  align-items: center;
+  height: 60vh;
 }
 
 .error-message {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  justify-content: center;
+  height: 60vh;
   text-align: center;
+  padding: 2rem;
 
   ion-button {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
   }
 }
 
 .pokemon-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
 }
 
 .pokemon-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-  text-align: center;
+  --border-width: 4px;
+  --border-style: solid;
+  --border-color: #a0a29f;
+  --background: white;
+  --ion-color-primary: var(--border-color);
+
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--border-color);
+  }
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .pokemon-image-container {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 100%);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pokemon-image {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .pokemon-image {
+    transform: scale(1.05);
   }
 }
 
-.pokemon-image {
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  background-color: #ffffff;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
 ion-card-header {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: transparent;
+  padding: 0;
+  margin-top: auto;
 }
 
 ion-card-title {
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #333;
+  margin-bottom: 0.25rem;
 }
 
 ion-card-subtitle {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
-  color: #888;
+  color: var(--ion-color-medium);
 }
 
 .pagination-toolbar {
   --background: white;
+  --border-width: 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  padding: 0.5rem 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+
+  ion-buttons {
+    min-width: 80px;
+  }
+
+  ion-button {
+    --color: var(--ion-color-primary);
+    --background-hover: rgba(var(--ion-color-primary-rgb), 0.1);
+  }
 
   ion-text {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
     margin: 0 1rem;
+    min-width: 100px;
+    text-align: center;
   }
 }
 
 @media (max-width: 600px) {
   .pokemon-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
   }
 
-  .pokemon-image {
-    width: 80px;
-    height: 80px;
+  .pokemon-card {
+    .pokemon-image {
+      width: 100px;
+      height: 100px;
+    }
   }
+}
+
+.pokemon-card {
+  &[style*='--border-color: #FFCE4B'] { --ion-color-primary: #FFCE4B; } /* yellow */
+  &[style*='--border-color: #429BED'] { --ion-color-primary: #429BED; } /* blue */
+  &[style*='--border-color: #48D0B0'] { --ion-color-primary: #48D0B0; } /* green */
+  &[style*='--border-color: #FA6555'] { --ion-color-primary: #FA6555; } /* red */
+  &[style*='--border-color: #9F5BBA'] { --ion-color-primary: #9F5BBA; } /* purple */
+  &[style*='--border-color: #FB5584'] { --ion-color-primary: #FB5584; } /* pink */
+  &[style*='--border-color: #B1736C'] { --ion-color-primary: #B1736C; } /* brown */
+  &[style*='--border-color: #000000'] { --ion-color-primary: #000000; } /* black */
+  &[style*='--border-color: #F9F9F9'] { --ion-color-primary: #F9F9F9; } /* white */
+  &[style*='--border-color: #A0A29F'] { --ion-color-primary: #A0A29F; } /* gray */
 }

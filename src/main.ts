@@ -14,6 +14,13 @@ import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { importProvidersFrom } from '@angular/core';
+import { addIcons } from 'ionicons';
+import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
+
+addIcons({
+  'chevron-back-outline': chevronBackOutline,
+  'chevron-forward-outline': chevronForwardOutline
+});
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -21,13 +28,11 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular({
       mode: 'md'
     }),
-
     provideRouter(
       routes,
       withPreloading(PreloadAllModules),
       withComponentInputBinding()
     ),
-
     provideHttpClient(),
   ],
 }).catch(err => console.error(err));

@@ -10,6 +10,13 @@ import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 
+interface Pokemon {
+  id: string;
+  name: string;
+  speciesColor: string;
+  [key: string]: string;
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -26,7 +33,7 @@ import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 export class HomePage {
   private readonly pokemonService = inject(PokemonService);
 
-  pokemons: any[] = [];
+  pokemons: Pokemon[] = [];
   offset = 0;
   limit = 20;
   isLoading = false;
@@ -47,9 +54,8 @@ export class HomePage {
     this.error = null;
 
     this.pokemonService.getPokemons(this.offset, this.limit).subscribe({
-      next: (pokemonsWithColors: any[]) => {
-        console.log('Pokémons recebidos:', pokemonsWithColors);
-        this.pokemons = pokemonsWithColors;
+      next: (pokemons: Pokemon[]) => {
+        this.pokemons = pokemons;
         this.hasMore = this.offset + this.limit < 1000;
         this.calculateTotalPages(1000);
         this.isLoading = false;
@@ -82,11 +88,6 @@ export class HomePage {
     this.loadPokemons();
   }
 
-  getPokemonId(url: string): string {
-    const parts = url.split('/');
-    return parts[parts.length - 2] || '0';
-  }
-
   reload() {
     this.offset = 0;
     this.currentPage = 1;
@@ -95,27 +96,20 @@ export class HomePage {
     this.loadPokemons();
   }
 
-  getCardStyle(color: string) {
-  const colorMap: { [key: string]: string } = {
-    black: '#000000',
-    blue: '#429BED',
-    brown: '#B1736C',
-    gray: '#A0A29F',
-    green: '#48D0B0',
-    pink: '#FB5584',
-    purple: '#9F5BBA',
-    red: '#FA6555',
-    white: '#F9F9F9',
-    yellow: '#FFCE4B'
-  };
+  getColor(colorName: string): string {
+    const colorMap: {[key: string]: string} = {
+      black: '#000000',
+      blue: '#429BED',
+      brown: '#B1736C',
+      gray: '#A0A29F',
+      green: '#48D0B0',
+      pink: '#FB5584',
+      purple: '#9F5BBA',
+      red: '#FA6555',
+      white: '#F9F9F9',
+      yellow: '#FFCE4B'
+    };
 
-  const borderColor = colorMap[color] || '#A0A29F';
-
-  return {
-    border: `3px solid ${borderColor}`,
-    backgroundColor: '#ffffff',
-    color: '#000000'
-  };
-}
-
+    return colorMap[colorName] || '#A0A29F';
+  }
 }

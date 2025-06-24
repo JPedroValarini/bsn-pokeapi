@@ -1,19 +1,19 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Pokédex</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div *ngIf="isLoading && pokemons.length === 0" class="loading-spinner">
-    <ion-spinner></ion-spinner>
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
   </div>
 
   <div *ngIf="error" class="error-message">
     <ion-text color="danger">
       <p>Erro ao carregar Pokémons</p>
     </ion-text>
-    <ion-button (click)="reload()">Tentar novamente</ion-button>
+    <ion-button (click)="reload()" fill="outline">Tentar novamente</ion-button>
   </div>
 
   <div *ngIf="!error" class="pokemon-grid">
@@ -21,35 +21,37 @@
       *ngFor="let pokemon of pokemons"
       [routerLink]="['/details', pokemon.id]"
       class="pokemon-card"
-      [style]="getCardStyle(pokemon.speciesColor)"
+      [style.--border-color]="getColor(pokemon.speciesColor)"
     >
-      <img
-        [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + pokemon.id + '.png'"
-        alt="{{ pokemon.name }}"
-        class="pokemon-image"
-      />
-      <ion-card-header>
-        <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
-        <ion-card-subtitle>#{{ pokemon.id | number:'3.0' }}</ion-card-subtitle>
-      </ion-card-header>
+      <div class="card-content">
+        <div class="pokemon-image-container">
+          <img
+            [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/' + pokemon.id + '.png'"
+            alt="{{ pokemon.name }}"
+            class="pokemon-image"
+          />
+        </div>
+        <ion-card-header>
+          <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
+          <ion-card-subtitle>#{{ pokemon.id | number:'3.0' }}</ion-card-subtitle>
+        </ion-card-header>
+      </div>
     </ion-card>
   </div>
 
   <ion-footer *ngIf="!error && pokemons.length > 0">
     <ion-toolbar class="pagination-toolbar">
       <ion-buttons slot="start">
-        <ion-button (click)="previousPage()" [disabled]="offset === 0">
-          <ion-icon name="chevron-back-outline"></ion-icon>
-          Anterior
+        <ion-button (click)="previousPage()" [disabled]="offset === 0" fill="clear">
+          <ion-icon name="chevron-back-outline" slot="icon-only" color="primary"></ion-icon>
         </ion-button>
       </ion-buttons>
 
-      <ion-text>Página {{ currentPage }} de {{ totalPages }}</ion-text>
+      <ion-text color="medium">Página {{ currentPage }} de {{ totalPages }}</ion-text>
 
       <ion-buttons slot="end">
-        <ion-button (click)="nextPage()" [disabled]="!hasMore">
-          Próxima
-          <ion-icon name="chevron-forward-outline"></ion-icon>
+        <ion-button (click)="nextPage()" [disabled]="!hasMore" fill="clear">
+          <ion-icon name="chevron-forward-outline" slot="icon-only" color="primary"></ion-icon>
         </ion-button>
       </ion-buttons>
     </ion-toolbar>
