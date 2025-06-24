@@ -19,17 +19,18 @@
   <div *ngIf="!error" class="pokemon-grid">
     <ion-card
       *ngFor="let pokemon of pokemons"
-      [routerLink]="['/details', getPokemonId(pokemon.url)]"
+      [routerLink]="['/details', pokemon.id]"
       class="pokemon-card"
+      [style]="getCardStyle(pokemon.speciesColor)"
     >
       <img
-        [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + getPokemonId(pokemon.url) + '.png'"
+        [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + pokemon.id + '.png'"
         alt="{{ pokemon.name }}"
         class="pokemon-image"
-      >
+      />
       <ion-card-header>
         <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
-        <ion-card-subtitle>#{{ getPokemonId(pokemon.url) | number:'3.0' }}</ion-card-subtitle>
+        <ion-card-subtitle>#{{ pokemon.id | number:'3.0' }}</ion-card-subtitle>
       </ion-card-header>
     </ion-card>
   </div>

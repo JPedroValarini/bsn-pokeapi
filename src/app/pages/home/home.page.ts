@@ -47,13 +47,15 @@ export class HomePage {
     this.error = null;
 
     this.pokemonService.getPokemons(this.offset, this.limit).subscribe({
-      next: (response: any) => {
-        this.pokemons = response.results;
-        this.hasMore = !!response.next;
-        this.calculateTotalPages(response.count);
+      next: (pokemonsWithColors: any[]) => {
+        console.log('Pokémons recebidos:', pokemonsWithColors);
+        this.pokemons = pokemonsWithColors;
+        this.hasMore = this.offset + this.limit < 1000;
+        this.calculateTotalPages(1000);
         this.isLoading = false;
       },
       error: (err) => {
+        console.error('Erro ao carregar pokémons:', err);
         this.error = err;
         this.isLoading = false;
       }
@@ -92,4 +94,28 @@ export class HomePage {
     this.hasMore = true;
     this.loadPokemons();
   }
+
+  getCardStyle(color: string) {
+  const colorMap: { [key: string]: string } = {
+    black: '#000000',
+    blue: '#429BED',
+    brown: '#B1736C',
+    gray: '#A0A29F',
+    green: '#48D0B0',
+    pink: '#FB5584',
+    purple: '#9F5BBA',
+    red: '#FA6555',
+    white: '#F9F9F9',
+    yellow: '#FFCE4B'
+  };
+
+  const borderColor = colorMap[color] || '#A0A29F';
+
+  return {
+    border: `3px solid ${borderColor}`,
+    backgroundColor: '#ffffff',
+    color: '#000000'
+  };
+}
+
 }

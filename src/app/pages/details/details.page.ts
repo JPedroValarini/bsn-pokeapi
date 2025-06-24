@@ -53,7 +53,7 @@ export class DetailsPage implements OnInit {
 
   checkIfFavorite() {
     const favorites = this.pokemonService.favorites();
-    this.isFavorite = favorites.some(fav => fav.id === this.pokemon.id);
+    this.isFavorite = favorites.some((fav: { id: any; }) => fav.id === this.pokemon.id);
   }
 
   toggleFavorite() {
