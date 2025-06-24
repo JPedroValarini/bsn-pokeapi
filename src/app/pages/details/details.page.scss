@@ -1,0 +1,21 @@
+.pokemon-image {
+  max-width: 200px;
+  height: auto;
+  margin: 0 auto;
+}
+
+ion-progress-bar {
+  margin: 0 10px;
+}
+
+ion-chip {
+  margin: 5px;
+}
+
+@media (orientation: landscape) {
+  .pokemon-image {
+    max-width: 150px;
+    float: left;
+    margin-right: 20px;
+  }
+}

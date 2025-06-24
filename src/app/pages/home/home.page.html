@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Pokédex</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="isLoading && pokemons.length === 0" class="loading-spinner">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <ion-text color="danger">
+      <p>Erro ao carregar Pokémons</p>
+    </ion-text>
+    <ion-button (click)="reload()">Tentar novamente</ion-button>
+  </div>
+
+  <ion-list *ngIf="!error">
+    <ion-item
+      *ngFor="let pokemon of pokemons"
+      [routerLink]="['/details', getPokemonId(pokemon.url)]"
+    >
+      <ion-avatar slot="start">
+        <img [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + getPokemonId(pokemon.url) + '.png'">
+      </ion-avatar>
+      <ion-label>{{ pokemon.name | titlecase }}</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Carregando mais Pokémons...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
