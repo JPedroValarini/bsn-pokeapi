@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader,
   IonCardTitle, IonCardSubtitle, IonSpinner, IonText, IonButton,
-  IonFooter, IonButtons, IonIcon
+  IonFooter, IonButtons, IonIcon, ToastController
 } from '@ionic/angular/standalone';
 import { PokemonService } from '../../services/pokemon.service';
 import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
+import {
+  chevronBackOutline, chevronForwardOutline,
+  heartOutline, heart
+} from 'ionicons/icons';
 
 interface Pokemon {
   id: string;
@@ -32,6 +35,7 @@ interface Pokemon {
 })
 export class HomePage {
   private readonly pokemonService = inject(PokemonService);
+  private readonly toastController = inject(ToastController);
 
   pokemons: Pokemon[] = [];
   offset = 0;
@@ -43,7 +47,7 @@ export class HomePage {
   totalPages = 1;
 
   constructor() {
-    addIcons({ chevronBackOutline, chevronForwardOutline });
+    addIcons({ chevronBackOutline, chevronForwardOutline, 'heart-outline': heartOutline, heart });
     this.loadPokemons();
   }
 
@@ -97,7 +101,7 @@ export class HomePage {
   }
 
   getColor(colorName: string): string {
-    const colorMap: {[key: string]: string} = {
+    const colorMap: { [key: string]: string } = {
       black: '#000000',
       blue: '#429BED',
       brown: '#B1736C',
@@ -112,4 +116,39 @@ export class HomePage {
 
     return colorMap[colorName] || '#A0A29F';
   }
+
+  isFavorite(pokemonId: number) {
+    return this.pokemonService.favorites().some(p => p.id === pokemonId);
+  }
+
+  toggleFavorite(pokemon: any) {
+    const isFav = this.isFavorite(pokemon.id);
+
+    if (isFav) {
+      this.pokemonService.removeFavorite(pokemon.id);
+      this.showToast(`${pokemon.name} removido dos favoritos`);
+    } else {
+      this.pokemonService.addFavorite(pokemon);
+      this.showToast(`${pokemon.name} adicionado aos favoritos`);
+    }
+  }
+
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      position: 'bottom',
+      duration: 500,
+      color: 'tertiary',
+      buttons: [
+        {
+          text: 'x',
+          role: 'cancel',
+          handler: () => {
+          }
+        }
+      ]
+    });
+    toast.present();
+  }
+
 }

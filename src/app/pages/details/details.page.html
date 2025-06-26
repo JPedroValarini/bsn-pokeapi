@@ -17,55 +17,59 @@
 
 <ion-content>
   <ng-container *ngIf="!isLoading && pokemon; else loading">
-    <div class="ion-padding ion-text-center">
-      <ion-img
-        [src]="pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default"
-        [alt]="pokemon.name"
-        class="pokemon-image">
-      </ion-img>
+    <div class="details-container ion-padding">
+      <div class="top-section">
+        <ion-img
+          [src]="pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default"
+          [alt]="pokemon.name"
+          class="pokemon-image">
+        </ion-img>
 
-      <ion-chip *ngFor="let type of pokemon.types" [color]="type.type.name">
-        {{ type.type.name | titlecase }}
-      </ion-chip>
+        <div class="types">
+          <ion-chip *ngFor="let type of pokemon.types" [color]="type.type.name">
+            {{ type.type.name | titlecase }}
+          </ion-chip>
+        </div>
+      </div>
+
+      <ion-list>
+        <ion-list-header>
+          <ion-label>Estatísticas</ion-label>
+        </ion-list-header>
+
+        <ion-item *ngFor="let stat of pokemon.stats">
+          <ion-label>{{ stat.stat.name | titlecase }}</ion-label>
+          <ion-progress-bar
+            [value]="getStatPercentage(stat.base_stat)"
+            [color]="stat.base_stat > 50 ? 'success' : 'warning'">
+          </ion-progress-bar>
+          <ion-note slot="end">{{ stat.base_stat }}</ion-note>
+        </ion-item>
+
+        <ion-list-header>
+          <ion-label>Habilidades</ion-label>
+        </ion-list-header>
+
+        <ion-item *ngFor="let ability of pokemon.abilities">
+          <ion-label>{{ ability.ability.name | titlecase }}</ion-label>
+          <ion-note slot="end" *ngIf="ability.is_hidden">(Hidden)</ion-note>
+        </ion-item>
+
+        <ion-list-header>
+          <ion-label>Informações da Espécie</ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-label>Taxa de Captura</ion-label>
+          <ion-note slot="end">{{ pokemon.species.capture_rate }}</ion-note>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Cor</ion-label>
+          <ion-note slot="end">{{ pokemon.species.color.name | titlecase }}</ion-note>
+        </ion-item>
+      </ion-list>
     </div>
-
-    <ion-list>
-      <ion-list-header>
-        <ion-label>Estatísticas</ion-label>
-      </ion-list-header>
-
-      <ion-item *ngFor="let stat of pokemon.stats">
-        <ion-label>{{ stat.stat.name | titlecase }}</ion-label>
-        <ion-progress-bar
-          [value]="getStatPercentage(stat.base_stat)"
-          [color]="stat.base_stat > 50 ? 'success' : 'warning'">
-        </ion-progress-bar>
-        <ion-note slot="end">{{ stat.base_stat }}</ion-note>
-      </ion-item>
-
-      <ion-list-header>
-        <ion-label>Habilidades</ion-label>
-      </ion-list-header>
-
-      <ion-item *ngFor="let ability of pokemon.abilities">
-        <ion-label>{{ ability.ability.name | titlecase }}</ion-label>
-        <ion-note slot="end" *ngIf="ability.is_hidden">(Hidden)</ion-note>
-      </ion-item>
-
-      <ion-list-header>
-        <ion-label>Informações da Espécie</ion-label>
-      </ion-list-header>
-
-      <ion-item>
-        <ion-label>Taxa de Captura</ion-label>
-        <ion-note slot="end">{{ pokemon.species.capture_rate }}</ion-note>
-      </ion-item>
-
-      <ion-item>
-        <ion-label>Cor</ion-label>
-        <ion-note slot="end">{{ pokemon.species.color.name | titlecase }}</ion-note>
-      </ion-item>
-    </ion-list>
   </ng-container>
 
   <ng-template #loading>

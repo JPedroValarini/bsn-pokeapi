@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Favoritos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="pokemonService.favorites().length === 0" class="empty-state">
+    <ion-icon name="heart-dislike-outline" size="large"></ion-icon>
+    <ion-text>Nenhum Pokémon favoritado ainda</ion-text>
+  </div>
+
+  <div class="pokemon-grid">
+    <ion-card
+      *ngFor="let pokemon of pokemonService.favorites()"
+      (click)="openDetails(pokemon.id)"
+      class="pokemon-card">
+      <img [src]="getPokemonImage(pokemon.id)" class="pokemon-image">
+      <ion-card-header>
+        <ion-card-title>{{ pokemon.name | titlecase }}</ion-card-title>
+        <ion-card-subtitle>#{{ pokemon.id | number:'3.0' }}</ion-card-subtitle>
+      </ion-card-header>
+    </ion-card>
+  </div>
+</ion-content>

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PokemonService } from '../../services/pokemon.service';
 import { forkJoin } from 'rxjs';
@@ -15,6 +15,7 @@ import { forkJoin } from 'rxjs';
 export class DetailsPage implements OnInit {
   private route = inject(ActivatedRoute);
   private pokemonService = inject(PokemonService);
+  private toastController = inject(ToastController);
 
   pokemon: any = null;
   isLoading = true;
@@ -23,7 +24,6 @@ export class DetailsPage implements OnInit {
 
   ngOnInit() {
     const pokemonId = this.route.snapshot.paramMap.get('id');
-
     if (pokemonId) {
       this.loadPokemonDetails(pokemonId);
     }
@@ -31,7 +31,6 @@ export class DetailsPage implements OnInit {
 
   loadPokemonDetails(id: string) {
     this.isLoading = true;
-
     forkJoin([
       this.pokemonService.getPokemonDetails(id),
       this.pokemonService.getPokemonSpecies(id)
@@ -59,10 +58,22 @@ export class DetailsPage implements OnInit {
   toggleFavorite() {
     if (this.isFavorite) {
       this.pokemonService.removeFavorite(this.pokemon.id);
+      this.showToast(`${this.pokemon.name} removido dos favoritos`);
     } else {
       this.pokemonService.addFavorite(this.pokemon);
+      this.showToast(`${this.pokemon.name} adicionado aos favoritos`);
     }
     this.isFavorite = !this.isFavorite;
+  }
+
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 1500,
+      position: 'bottom',
+      color: 'primary'
+    });
+    toast.present();
   }
 
   getStatPercentage(statValue: number): number {

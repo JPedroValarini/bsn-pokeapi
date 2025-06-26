@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 
 interface PokemonResponse {
   name: string;
@@ -19,9 +19,21 @@ interface PokemonWithColor {
 export class PokemonService {
   private apiUrl = 'https://pokeapi.co/api/v2/pokemon';
   private speciesUrl = 'https://pokeapi.co/api/v2/pokemon-species';
-  favorites = signal<any[]>([]);
+  private readonly STORAGE_KEY = 'pokemon_favorites';
+
+  favorites = signal<any[]>(this.loadFromStorage());
 
   constructor(private http: HttpClient) { }
+
+  private loadFromStorage(): any[] {
+    const favoritesJson = localStorage.getItem(this.STORAGE_KEY);
+    return favoritesJson ? JSON.parse(favoritesJson) : [];
+  }
+
+  private saveToStorage(favorites: any[]): void {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(favorites));
+    this.favorites.set(favorites);
+  }
 
   getPokemons(offset: number, limit: number): Observable<PokemonWithColor[]> {
     return this.http.get<{ results: PokemonResponse[] }>(`${this.apiUrl}?offset=${offset}&limit=${limit}`).pipe(
@@ -40,9 +52,6 @@ export class PokemonService {
       this.http.get<any>(`${this.apiUrl}/${id}`),
       this.http.get<any>(`${this.speciesUrl}/${id}`)
     ]).pipe(
-      tap(([details, species]) => {
-        console.log('Species data:', species);
-      }),
       map(([details, species]) => ({
         ...details,
         speciesColor: species.color?.name || 'gray',
@@ -65,10 +74,19 @@ export class PokemonService {
   }
 
   addFavorite(pokemon: any) {
-    this.favorites.update((favs: any) => [...favs, pokemon]);
+    const currentFavorites = this.favorites();
+    if (!currentFavorites.some(p => p.id === pokemon.id)) {
+      const newFavorites = [...currentFavorites, pokemon];
+      this.saveToStorage(newFavorites);
+    }
   }
 
   removeFavorite(id: number) {
-    this.favorites.update((favs: any[]) => favs.filter(p => p.id !== id));
+    const newFavorites = this.favorites().filter(p => p.id !== id);
+    this.saveToStorage(newFavorites);
+  }
+
+  isFavorite(id: number): boolean {
+    return this.favorites().some(p => p.id === id);
   }
 }
